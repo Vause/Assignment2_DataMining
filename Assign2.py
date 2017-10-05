@@ -25,19 +25,12 @@ while i < len(sortedArr):
 neg = sortedArr[:index]
 pos = sortedArr[index:]
 
-#print(neg)
-#print("\n\n ..................\n\n")
-#print(pos)
-
 # flip axis
 neg = numpy.swapaxes(neg, 0, 1)
 pos = numpy.swapaxes(pos, 0, 1)
 
 n = Xtrain.shape[0]
 d = Xtrain.shape[1] - 1
-
-# Training... Collect mean and standard deviation for each dimension for each class..
-# Also, calculate P(C+) and P(C-)
 
 posMeans = []
 posSTDs = []
@@ -59,6 +52,7 @@ negMean3 = numpy.mean(neg[2])
 negMean4 = numpy.mean(neg[3])
 negMeans.extend((negMean1, negMean2, negMean3, negMean4))
 
+
 # calculate standard deviations for each attribute in positive matrix
 posSTD1 = numpy.std(pos[0])
 posSTD2 = numpy.std(pos[1])
@@ -74,27 +68,25 @@ negSTD4 = numpy.std(neg[3])
 negSTDs.extend((negSTD1, negSTD2, negSTD3, negSTD4))
 
 # calculate prior probability for classes
-posPrior = len(pos) / len(Xtrain)
-negPrior = len(neg) / len(Xtrain)
+posPrior = (float)(len(pos)) / len(Xtrain)
+negPrior = (float)(len(neg)) / len(Xtrain)
 
 # Testing .....
 Xtest = numpy.loadtxt(testingFile)
 nn = Xtest.shape[0]  # Number of points in the testing data.
 
-tp = 0  # True Positive
-fp = 0  # False Positive
-tn = 0  # True Negative
-fn = 0  # False Negative
+tp = 0.0  # True Positive
+fp = 0.0  # False Positive
+tn = 0.0  # True Negative
+fn = 0.0  # False Negative
 
-#x = 0
-#y = 0
 # iterate points in test data
 for x in range(0, nn):
     # scores for probability of point falling in positive class and negative class
     posMult = 1.0
     negMult = 1.0
     # class: 1 = positive; -1 = negative
-    result = 0
+    result = 0.0
     # iterate attributes in test point
     for y in range(0, len(posMeans)):
         # joint probability of attributes
@@ -111,8 +103,8 @@ for x in range(0, nn):
         result = -1
 
     # actual class of test point
-    actual = Xtrain[x][4]
-
+    actual = Xtest[x][4]
+	
     # comparing our prediction to actual
     if result == 1 and actual == 1:
         tp += 1
@@ -125,11 +117,10 @@ for x in range(0, nn):
 
 print("\nClassification Accuracy: " + str('{accuracy:.2%}'.format(accuracy=((tp + tn )/( tp + tn + fp + fn)))))
 
+print("True Positive: " + str(int(tp)))
+print("True Negative: " + str(int(tn)))
+print("False Positive: " + str(int(fp)))
+print("False Negative: " + str(int(fn)))
 
-print("True Positive: " + str(tp))
-print("True Negative: " + str(tn))
-print("False Positive: " + str(fp))
-print("False Negative: " + str(fn))
-
-print("Classification Precision: " + str(tp / (tp + fp)))
+#print("Classification Precision: " + str(tp / (tp + fp)))
 print("Classification Recall: " + str(tp / (tp + fn)))
